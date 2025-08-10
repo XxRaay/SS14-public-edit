@@ -1,0 +1,16 @@
+- type: entity
+  id: ActionSCPMask
+  name: Надеть маску
+  description: Надеть маску на цель в радиусе 2 тайлов и оглушить её.
+  parent: BaseAction
+  components:
+  - type: Action
+    useDelay: 300 # 5 минут
+    icon: { sprite: Imperial/Seriozha/SCP/actions/mask_action.rsi, state: mask_action_icon }
+  - type: TargetAction
+    range: 2
+    checkCanAccess: true
+  - type: EntityTargetAction
+    event: !type:SCPMaskActionEvent
+
+

@@ -114,6 +114,12 @@
     sprite: Imperial/Seriozha/SCP/objects/Mask.rsi
   - type: Clothing
     sprite: Imperial/Seriozha/SCP/objects/Mask.rsi
+  - type: ActionGrant
+    actions:
+    - ActionSCPMask
+  - type: ItemActionGrant
+    actions:
+    - ActionSCPMask
   - type: Armor
     modifiers:
       coefficients:
