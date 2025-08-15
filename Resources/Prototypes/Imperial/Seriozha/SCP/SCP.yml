@@ -131,6 +131,9 @@
         Caustic: 0.48
   - type: ExplosionResistance
     damageCoefficient: 0.48
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 1.5
+    baseSprintSpeed: 1.5
 
 - type: entity
   name: Doctor
