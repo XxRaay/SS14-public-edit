@@ -167,28 +167,12 @@ public sealed class SupermatterEventSystem : EntitySystem
         var randomEvtIndex = _random.Next(0, comp.AllowedEventTypes.Count);
         var randomEvtType = comp.AllowedEventTypes[randomEvtIndex];
 
-        if (!comp.SupermatterEventTypesToEvents.TryGetValue(randomEvtType, out var eventHandler))
+        var eventHandler = comp.Events.FirstOrDefault(evt => evt.Type == randomEvtType);
+        if (eventHandler == null)
             return;
 
-        switch (eventHandler)
-        {
-            case SupermatterNoneEvent:
-                SupermatterNoneEvent.Activate(entity, this);
-                AnnounceFromSupermatterConsole(entity.Owner, SupermatterNoneEvent.GetAnnouncement());
-                break;
-            case SupermatterLightningEvent:
-                SupermatterLightningEvent.Activate(entity, this);
-                AnnounceFromSupermatterConsole(entity.Owner, SupermatterLightningEvent.GetAnnouncement());
-                break;
-            case SupermatterRadiationEvent:
-                SupermatterRadiationEvent.Activate(entity, this);
-                AnnounceFromSupermatterConsole(entity.Owner, SupermatterRadiationEvent.GetAnnouncement());
-                break;
-            case SupermatterPlasmaEvent:
-                SupermatterPlasmaEvent.Activate(entity, this);
-                AnnounceFromSupermatterConsole(entity.Owner, SupermatterPlasmaEvent.GetAnnouncement());
-                break;
-        }
+        eventHandler.Activate(entity, this);
+        AnnounceFromSupermatterConsole(entity.Owner, eventHandler.GetAnnouncement());
     }
 
     private void ProcessActiveEvent(Entity<SupermatterEventComponent> entity, TimeSpan currentTime)
@@ -198,24 +182,10 @@ public sealed class SupermatterEventSystem : EntitySystem
         if (comp.EventEndTime == TimeSpan.Zero)
             return;
 
-        if (!comp.SupermatterEventTypesToEvents.TryGetValue(comp.CurrentEvent, out var eventHandler))
+        var eventHandler = comp.Events.FirstOrDefault(evt => evt.Type == comp.CurrentEvent);
+        if (eventHandler == null)
             return;
-
-        switch (eventHandler)
-        {
-            case SupermatterNoneEvent:
-                SupermatterNoneEvent.Process(entity, this, currentTime);
-                break;
-            case SupermatterLightningEvent:
-                SupermatterLightningEvent.Process(entity, this, currentTime);
-                break;
-            case SupermatterRadiationEvent:
-                SupermatterRadiationEvent.Process(entity, this, currentTime);
-                break;
-            case SupermatterPlasmaEvent:
-                SupermatterPlasmaEvent.Process(entity, this, currentTime);
-                break;
-        }
+        eventHandler.Process(entity, this, currentTime);
     }
 
 

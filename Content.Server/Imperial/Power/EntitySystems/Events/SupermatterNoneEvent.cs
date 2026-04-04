@@ -5,9 +5,12 @@ namespace Content.Server.Imperial.Power.EntitySystems.Events;
 /// <summary>
 /// Событие "Ничего" - период спокойствия суперматерии
 /// </summary>
-public sealed class SupermatterNoneEvent
+[DataDefinition]
+public sealed class SupermatterNoneEvent : ISupermatterEvent
 {
-    public static void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
+    public SupermatterEventComponent.SupermatterEventType Type => SupermatterEventComponent.SupermatterEventType.None;
+
+    public void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
     {
         if (entity.AsType() == EntityUid.Invalid)
         {
@@ -23,11 +26,11 @@ public sealed class SupermatterNoneEvent
         entity.Comp.LastNextEventTimerUpdate = currentTime;
     }
 
-    public static void Process(Entity<SupermatterEventComponent> _, SupermatterEventSystem __, TimeSpan ___)
+    public void Process(Entity<SupermatterEventComponent> _, SupermatterEventSystem __, TimeSpan ___)
     {
     }
 
-    public static string GetAnnouncement()
+    public string GetAnnouncement()
     {
         return Loc.GetString("supermatter-event-none");
     }

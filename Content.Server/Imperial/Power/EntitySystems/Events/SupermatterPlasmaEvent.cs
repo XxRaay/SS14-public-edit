@@ -8,9 +8,12 @@ namespace Content.Server.Imperial.Power.EntitySystems.Events;
 /// <summary>
 /// Событие "Плазма" - суперматерия генерирует плазму
 /// </summary>
-public sealed class SupermatterPlasmaEvent
+[DataDefinition]
+public sealed class SupermatterPlasmaEvent : ISupermatterEvent
 {
-    public static void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
+    public SupermatterEventComponent.SupermatterEventType Type => SupermatterEventComponent.SupermatterEventType.Plasma;
+
+    public void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
     {
         if (entity.AsType() == EntityUid.Invalid)
         {
@@ -27,7 +30,7 @@ public sealed class SupermatterPlasmaEvent
         entity.Comp.LastPlasmaTickUpdate = currentTime;
     }
 
-    public static void Process(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem, TimeSpan currentTime)
+    public void Process(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem, TimeSpan currentTime)
     {
         entity.Comp.PlasmaTickAccumulator ??= TimeSpan.Zero;
 
@@ -79,7 +82,7 @@ public sealed class SupermatterPlasmaEvent
         atmos.HotspotExpose(gridUid, tile, temp, volume, uid, true);
     }
 
-    public static string GetAnnouncement()
+    public string GetAnnouncement()
     {
         return Loc.GetString("supermatter-event-plasma");
     }

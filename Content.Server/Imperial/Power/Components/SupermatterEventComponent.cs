@@ -1,7 +1,6 @@
 using Robust.Shared.Prototypes;
 using Content.Shared.Radio;
 using Content.Server.Imperial.Power.EntitySystems.Events;
-using Robust.Shared.Random;
 
 namespace Content.Server.Imperial.Power.Components;
 
@@ -31,16 +30,14 @@ public sealed partial class SupermatterEventComponent : Component
         SupermatterEventType.Plasma,
     ];
 
-    /// <summary>
-    /// Тип события в само событие.
-    /// </summary>
-    public readonly Dictionary<SupermatterEventType, object> SupermatterEventTypesToEvents = new()
-    {
-        { SupermatterEventType.None, new SupermatterNoneEvent() },
-        { SupermatterEventType.Lightning, new SupermatterLightningEvent() },
-        { SupermatterEventType.Radiation, new SupermatterRadiationEvent() },
-        { SupermatterEventType.Plasma, new SupermatterPlasmaEvent() },
-    };
+    [DataField]
+    public List<ISupermatterEvent> Events { get; set; } =
+    [
+        new SupermatterNoneEvent(),
+        new SupermatterLightningEvent(),
+        new SupermatterRadiationEvent(),
+        new SupermatterPlasmaEvent(),
+    ];
 
     /// <summary>
     /// Объявлена ли война Ядерными Оперативниками. Если да - не создавать события.

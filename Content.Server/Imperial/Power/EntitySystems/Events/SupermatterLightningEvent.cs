@@ -6,9 +6,12 @@ namespace Content.Server.Imperial.Power.EntitySystems.Events;
 /// <summary>
 /// Событие "Молния" - суперматерия генерирует электрические разряды
 /// </summary>
-public sealed class SupermatterLightningEvent
+[DataDefinition]
+public sealed class SupermatterLightningEvent : ISupermatterEvent
 {
-    public static void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
+    public SupermatterEventComponent.SupermatterEventType Type => SupermatterEventComponent.SupermatterEventType.Lightning;
+
+    public void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
     {
         if (entity.AsType() == EntityUid.Invalid)
         {
@@ -29,7 +32,7 @@ public sealed class SupermatterLightningEvent
         ShootRandomLightnings(entity, supermatterSystem);
     }
 
-    public static void Process(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem, TimeSpan currentTime)
+    public void Process(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem, TimeSpan currentTime)
     {
         var elapsedSinceLastUpdate = currentTime - entity.Comp.LastLightningCooldownUpdate;
         entity.Comp.LightningCooldown -= elapsedSinceLastUpdate;
@@ -50,15 +53,14 @@ public sealed class SupermatterLightningEvent
         entity.Comp.LightningCooldown = entity.Comp.LightningCooldownDuration;
     }
 
-    private static void ShootRandomLightnings(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
+    private void ShootRandomLightnings(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
     {
         // Используем ShootRandomLightnings для стрельбы в случайные цели в радиусе
         supermatterSystem.LightningSystem.ShootRandomLightnings(entity, entity.Comp.LightningBoltRadius, entity.Comp.LightningBoltCount);
     }
 
-    public static string GetAnnouncement()
+    public string GetAnnouncement()
     {
         return Loc.GetString("supermatter-event-lightning");
     }
 }
-
