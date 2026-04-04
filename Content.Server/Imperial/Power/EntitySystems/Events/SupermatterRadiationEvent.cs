@@ -5,9 +5,12 @@ namespace Content.Server.Imperial.Power.EntitySystems.Events;
 /// <summary>
 /// Событие "Радиация" - суперматерия излучает повышенную радиацию
 /// </summary>
-public sealed class SupermatterRadiationEvent
+[DataDefinition]
+public sealed class SupermatterRadiationEvent : ISupermatterEvent
 {
-    public static void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
+    public SupermatterEventComponent.SupermatterEventType Type => SupermatterEventComponent.SupermatterEventType.Radiation;
+
+    public void Activate(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem)
     {
         if (entity.AsType() == EntityUid.Invalid)
         {
@@ -25,12 +28,12 @@ public sealed class SupermatterRadiationEvent
         supermatterSystem.SetRadiation(entity, entity.Comp.RadiationEventIntensity);
     }
 
-    public static void Process(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem, TimeSpan currentTime)
+    public void Process(Entity<SupermatterEventComponent> entity, SupermatterEventSystem supermatterSystem, TimeSpan currentTime)
     {
         supermatterSystem.SetRadiation(entity, entity.Comp.RadiationEventIntensity);
     }
 
-    public static string GetAnnouncement()
+    public string GetAnnouncement()
     {
         return Loc.GetString("supermatter-event-radiation");
     }
