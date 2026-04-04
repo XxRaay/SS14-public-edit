@@ -14,6 +14,7 @@ using Content.Server.Preferences.Managers;
 using Content.Server.Roles;
 using Content.Server.Roles.Jobs;
 using Content.Server.Shuttles.Components;
+using Content.Server.Imperial.Subscriptions;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Antag;
 using Content.Shared.Clothing;
@@ -57,6 +58,7 @@ public sealed partial class AntagSelectionSystem : GameRuleSystem<AntagSelection
 
     // arbitrary random number to give late joining some mild interest.
     public const float LateJoinRandomChance = 0.5f;
+    [Dependency] private readonly SubscriptionManager _subscriptions = default!;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -493,8 +495,8 @@ public sealed partial class AntagSelectionSystem : GameRuleSystem<AntagSelection
     /// </summary>
     public AntagSelectionPlayerPool GetPlayerPool(Entity<AntagSelectionComponent> ent, IList<ICommonSession> sessions, AntagSelectionDefinition def)
     {
-        var preferredList = new List<ICommonSession>();
-        var fallbackList = new List<ICommonSession>();
+        var preferredList = new List<AntagSelectionPoolEntry>();
+        var fallbackList = new List<AntagSelectionPoolEntry>();
         foreach (var session in sessions)
         {
             if (!IsSessionValid(ent, session, def) || !IsEntityValid(session.AttachedEntity, def))
@@ -503,14 +505,16 @@ public sealed partial class AntagSelectionSystem : GameRuleSystem<AntagSelection
             if (ent.Comp.PreSelectedSessions.TryGetValue(def, out var preSelected) && preSelected.Contains(session))
                 continue;
 
+            var antagWeight = _subscriptions.GetAntagSelectionWeight(session.UserId);
+
             // Add player to the appropriate antag pool
             if (ValidAntagPreference(session, def.PrefRoles))
             {
-                preferredList.Add(session);
+                preferredList.Add(new AntagSelectionPoolEntry(session, antagWeight));
             }
             else if (ValidAntagPreference(session, def.FallbackRoles))
             {
-                fallbackList.Add(session);
+                fallbackList.Add(new AntagSelectionPoolEntry(session, antagWeight));
             }
         }
 

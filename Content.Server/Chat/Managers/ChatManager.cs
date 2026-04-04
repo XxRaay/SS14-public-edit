@@ -19,6 +19,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Replays;
 using Robust.Shared.Utility;
 using Content.Server.Imperial.Sponsors;
+using Content.Server.Imperial.Subscriptions;
 
 namespace Content.Server.Chat.Managers;
 
@@ -46,6 +47,7 @@ internal sealed partial class ChatManager : IChatManager
     [Dependency] private readonly PlayerRateLimitManager _rateLimitManager = default!;
     [Dependency] private readonly ISharedPlayerManager _player = default!;
     [Dependency] private readonly SponsorsManager _sponsorsManager = default!; // Imperial sponsors
+    [Dependency] private readonly SubscriptionManager _subscriptions = default!;
     [Dependency] private readonly DiscordChatLink _discordLink = default!;
 
     /// <summary>
@@ -287,6 +289,7 @@ internal sealed partial class ChatManager : IChatManager
             var prefs = _preferencesManager.GetPreferences(player.UserId);
             colorOverride = prefs.AdminOOCColor;
         }
+
         if (  _netConfigManager.GetClientCVar(player.Channel, CCVars.ShowOocPatronColor) && player.Channel.UserData.PatronTier is { } patron && PatronOocColors.TryGetValue(patron, out var patronColor))
         {
             wrappedMessage = Loc.GetString("chat-manager-send-ooc-patron-wrap-message", ("patronColor", patronColor),("playerName", player.Name), ("message", FormattedMessage.EscapeText(message)));
@@ -298,6 +301,14 @@ internal sealed partial class ChatManager : IChatManager
             wrappedMessage = Loc.GetString("chat-manager-send-ooc-patron-wrap-message", ("patronColor", sponsorData.OOCColor), ("playerName", player.Name), ("message", FormattedMessage.EscapeText(message)));
         }
         // Imperial sponsors end
+
+        if (_subscriptions.TryGetTier(player.UserId, out var tier))
+        {
+            wrappedMessage = Loc.GetString("chat-manager-send-ooc-patron-wrap-message",
+                ("patronColor", tier.Value.OocColor()),
+                ("playerName", player.Name),
+                ("message", FormattedMessage.EscapeText(message)));
+        }
 
         //TODO: player.Name color, this will need to change the structure of the MsgChatMessage
         ChatMessageToAll(ChatChannel.OOC, message, wrappedMessage, EntityUid.Invalid, hideChat: false, recordReplay: true, colorOverride: colorOverride, author: player.UserId);
