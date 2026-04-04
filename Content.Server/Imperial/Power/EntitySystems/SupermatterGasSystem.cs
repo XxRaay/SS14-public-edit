@@ -5,7 +5,6 @@ using Content.Server.Atmos.EntitySystems;
 using Content.Server.Imperial.Power.Components;
 using Content.Server.Imperial.XxRaay.Systems.Supermatter;
 using Content.Shared.Atmos;
-using Content.Shared.Imperial.XxRaay.Supermatter;
 using Content.Shared.Radiation.Components;
 using Robust.Shared.Prototypes;
 
@@ -102,19 +101,13 @@ public sealed class SupermatterGasSystem : EntitySystem
 
         foreach (var proto in _prototypeManager.EnumeratePrototypes<SupermatterGasReactionPrototype>())
         {
-            if (!typeof(ISupermatterGasReaction).IsAssignableFrom(proto.Reaction))
-                continue;
-
-            if (Activator.CreateInstance(proto.Reaction) is not ISupermatterGasReaction reaction)
-                continue;
-
             if (!_reactionsByGas.TryGetValue(proto.Gas, out var list))
             {
                 list = new List<ISupermatterGasReaction>();
                 _reactionsByGas[proto.Gas] = list;
             }
 
-            list.Add(reaction);
+            list.Add(proto.Reaction);
         }
     }
 
@@ -138,4 +131,3 @@ public sealed class SupermatterGasSystem : EntitySystem
         return EntityManager.TryGetComponent(uid, out component);
     }
 }
-

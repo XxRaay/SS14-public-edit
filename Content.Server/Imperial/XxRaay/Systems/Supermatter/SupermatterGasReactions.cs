@@ -20,9 +20,7 @@ public interface ISupermatterGasReaction
         float frameTime);
 }
 
-/// <summary>
-/// Реакция термониума
-/// </summary>
+[DataRecord]
 public sealed class ThermoniumIntegrityRegenReaction : ISupermatterGasReaction
 {
     public void React(
@@ -45,9 +43,7 @@ public sealed class ThermoniumIntegrityRegenReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция, изменяющая интенсивность радиации
-/// </summary>
+[DataRecord]
 public sealed class RadiationMultiplierReaction : ISupermatterGasReaction
 {
     public void React(
@@ -87,9 +83,7 @@ public sealed class RadiationMultiplierReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция антиноблия: выключает и включает суперматерию
-/// </summary>
+[DataRecord]
 public sealed class AntiNobliumShutdownReaction : ISupermatterGasReaction
 {
     public void React(
@@ -122,9 +116,7 @@ public sealed class AntiNobliumShutdownReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция трития: вычисляет множитель количества молний
-/// </summary>
+[DataRecord]
 public sealed class TritiumLightningMultiplierReaction : ISupermatterGasReaction
 {
     public void React(
@@ -150,9 +142,7 @@ public sealed class TritiumLightningMultiplierReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция гипер-ноблия: блокирует уничтожение существ
-/// </summary>
+[DataRecord]
 public sealed class HyperNobliumTouchCancelReaction : ISupermatterGasReaction
 {
     public void React(
@@ -170,4 +160,3 @@ public sealed class HyperNobliumTouchCancelReaction : ISupermatterGasReaction
         gasComp.Comp.HyperNobTouchCancelActive = moles > gasComp.Comp.GasActivationMoles;
     }
 }
-
