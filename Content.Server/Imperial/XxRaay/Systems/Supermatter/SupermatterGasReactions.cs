@@ -20,9 +20,7 @@ public interface ISupermatterGasReaction
         float frameTime);
 }
 
-/// <summary>
-/// Реакция термониума
-/// </summary>
+[DataRecord]
 public sealed class ThermoniumIntegrityRegenReaction : ISupermatterGasReaction
 {
     public void React(
@@ -45,9 +43,7 @@ public sealed class ThermoniumIntegrityRegenReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция, изменяющая интенсивность радиации
-/// </summary>
+[DataRecord]
 public sealed class RadiationMultiplierReaction : ISupermatterGasReaction
 {
     public void React(
@@ -74,37 +70,20 @@ public sealed class RadiationMultiplierReaction : ISupermatterGasReaction
 
         var multiplier = 1f;
 
-        switch (triggerGas)
-        {
-            case Gas.Ozonium:
-            {
-                var moles = gas.GetMoles(triggerGas);
-                if (moles <= gasComp.Comp.GasActivationMoles)
-                    return;
+        if (triggerGas is not (Gas.Ozonium or Gas.Plasma))
+            return;
 
-                multiplier *= gasComp.Comp.OzoneRadiationMultiplier;
-                break;
-            }
-            case Gas.Plasma:
-            {
-                var moles = gas.GetMoles(triggerGas);
-                if (moles <= gasComp.Comp.GasActivationMoles)
-                    return;
+        if (gas.GetMoles(Gas.Ozonium) > gasComp.Comp.GasActivationMoles)
+            multiplier *= gasComp.Comp.OzoneRadiationMultiplier;
 
-                multiplier *= gasComp.Comp.PlasmaRadiationMultiplier;
-                break;
-            }
-            default:
-                return;
-        }
+        if (gas.GetMoles(Gas.Plasma) > gasComp.Comp.GasActivationMoles)
+            multiplier *= gasComp.Comp.PlasmaRadiationMultiplier;
 
         radiation.Intensity = baseIntensity * multiplier;
     }
 }
 
-/// <summary>
-/// Реакция антиноблия: выключает и включает суперматерию
-/// </summary>
+[DataRecord]
 public sealed class AntiNobliumShutdownReaction : ISupermatterGasReaction
 {
     public void React(
@@ -137,9 +116,7 @@ public sealed class AntiNobliumShutdownReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция трития: вычисляет множитель количества молний
-/// </summary>
+[DataRecord]
 public sealed class TritiumLightningMultiplierReaction : ISupermatterGasReaction
 {
     public void React(
@@ -165,9 +142,7 @@ public sealed class TritiumLightningMultiplierReaction : ISupermatterGasReaction
     }
 }
 
-/// <summary>
-/// Реакция гипер-ноблия: блокирует уничтожение существ
-/// </summary>
+[DataRecord]
 public sealed class HyperNobliumTouchCancelReaction : ISupermatterGasReaction
 {
     public void React(
@@ -185,5 +160,3 @@ public sealed class HyperNobliumTouchCancelReaction : ISupermatterGasReaction
         gasComp.Comp.HyperNobTouchCancelActive = moles > gasComp.Comp.GasActivationMoles;
     }
 }
-
-
